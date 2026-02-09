@@ -54,12 +54,13 @@ const plans = [
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDIiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-60" />
+    <section id="pricing" className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/30 via-cyan-50/20 to-gray-50 relative overflow-hidden">
+      <div className="absolute top-1/3 left-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 right-10 w-80 h-80 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
 
       <div className="max-w-7xl mx-auto relative">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 text-gray-900 px-4 py-2 rounded-full text-sm font-medium mb-8 shadow-lg">
             Pricing
           </div>
           <h2 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-6">
@@ -67,7 +68,7 @@ export default function Pricing() {
             <br />
             with your ambition
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-700">
             Start free. Upgrade when you're ready. No surprises.
           </p>
         </div>
@@ -78,13 +79,13 @@ export default function Pricing() {
               key={index}
               className={`relative rounded-3xl p-10 ${
                 plan.popular
-                  ? 'bg-gray-900 text-white shadow-2xl shadow-gray-900/20 scale-105 ring-4 ring-gray-900/10'
-                  : 'bg-white border-2 border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                  ? 'bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-2 border-white/30 text-white shadow-2xl scale-105'
+                  : 'bg-white/30 backdrop-blur-xl border-2 border-white/40 hover:border-white/60 hover:shadow-xl'
               } transition-all duration-500`}
             >
               {plan.popular && (
                 <div className="absolute -top-5 left-0 right-0 flex justify-center">
-                  <div className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/20">
                     <Zap className="w-4 h-4" />
                     Most Popular
                   </div>
@@ -92,10 +93,10 @@ export default function Pricing() {
               )}
 
               <div className="mb-8">
-                <h3 className={`text-lg font-semibold mb-2 ${plan.popular ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
+                <h3 className={`text-lg font-semibold mb-2 ${plan.popular ? 'text-gray-300' : 'text-gray-600'} uppercase tracking-wider`}>
                   {plan.name}
                 </h3>
-                <p className={`text-sm ${plan.popular ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+                <p className={`text-sm ${plan.popular ? 'text-gray-400' : 'text-gray-700'} mb-6`}>
                   {plan.description}
                 </p>
 
@@ -108,7 +109,7 @@ export default function Pricing() {
                     <span className={`text-5xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
                       ${plan.price}
                     </span>
-                    <span className={`text-lg ${plan.popular ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <span className={`text-lg ${plan.popular ? 'text-gray-300' : 'text-gray-700'}`}>
                       /month
                     </span>
                   </div>
@@ -118,10 +119,10 @@ export default function Pricing() {
               <ul className="space-y-4 mb-10">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <div className={`flex-shrink-0 w-5 h-5 rounded-full ${plan.popular ? 'bg-blue-500' : 'bg-gray-900'} flex items-center justify-center mt-0.5`}>
+                    <div className={`flex-shrink-0 w-5 h-5 rounded-full ${plan.popular ? 'bg-gradient-to-br from-blue-500 to-cyan-500' : 'bg-gradient-to-br from-blue-600 to-cyan-600'} flex items-center justify-center mt-0.5 shadow-lg`}>
                       <Check className="w-3 h-3 text-white" />
                     </div>
-                    <span className={`text-sm ${plan.popular ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <span className={`text-sm ${plan.popular ? 'text-gray-200' : 'text-gray-700'}`}>
                       {feature}
                     </span>
                   </li>
@@ -131,8 +132,8 @@ export default function Pricing() {
               <button
                 className={`w-full py-4 px-6 rounded-xl font-semibold transition-all ${
                   plan.popular
-                    ? 'bg-white text-gray-900 hover:bg-gray-100 shadow-lg'
-                    : 'bg-gray-900 text-white hover:bg-gray-800 shadow-lg hover:shadow-xl'
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow-xl border border-white/20'
+                    : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-500 hover:to-cyan-500 shadow-xl hover:shadow-2xl border border-white/20'
                 }`}
               >
                 {plan.cta}
@@ -142,19 +143,19 @@ export default function Pricing() {
         </div>
 
         <div className="mt-16 text-center space-y-4">
-          <p className="text-gray-600">
+          <p className="text-gray-700 font-medium">
             All plans include 14-day free trial
           </p>
-          <div className="flex items-center justify-center gap-8 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-700">
+            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-4 py-2 rounded-full shadow-lg">
               <Check className="w-4 h-4 text-green-600" />
               No credit card required
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-4 py-2 rounded-full shadow-lg">
               <Check className="w-4 h-4 text-green-600" />
               Cancel anytime
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 px-4 py-2 rounded-full shadow-lg">
               <Check className="w-4 h-4 text-green-600" />
               24/7 support
             </div>

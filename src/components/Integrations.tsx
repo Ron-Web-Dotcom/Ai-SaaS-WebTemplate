@@ -17,17 +17,20 @@ const integrations = [
 
 export default function Integrations() {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-cyan-50/20 to-gray-50 relative overflow-hidden">
+      <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+
+      <div className="max-w-7xl mx-auto relative">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full text-sm font-medium text-blue-900 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full text-sm font-medium text-gray-900 mb-6 shadow-lg">
             <Boxes className="w-4 h-4" />
             Integrations
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             Connects With Your Stack
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-700">
             Seamlessly integrate with 150+ tools and platforms. API-first architecture for custom connections.
           </p>
         </div>
@@ -36,15 +39,15 @@ export default function Integrations() {
           {integrations.map((integration, index) => (
             <div
               key={index}
-              className="group bg-white rounded-xl border border-gray-200 p-6 hover:border-blue-300 hover:shadow-lg transition-all cursor-pointer"
+              className="group bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 p-6 hover:border-white/60 hover:shadow-xl transition-all cursor-pointer"
             >
               <div className="flex flex-col items-center text-center space-y-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span className="text-2xl">{integration.name[0]}</span>
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg border border-white/30">
+                  <span className="text-2xl text-white font-bold">{integration.name[0]}</span>
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900">{integration.name}</div>
-                  <div className="text-xs text-gray-500">{integration.category}</div>
+                  <div className="text-xs text-gray-700">{integration.category}</div>
                 </div>
               </div>
             </div>
@@ -52,7 +55,7 @@ export default function Integrations() {
         </div>
 
         <div className="mt-12 text-center">
-          <a href="#" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+          <a href="#" className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-xl border border-white/30 text-blue-600 hover:text-blue-700 hover:bg-white/30 font-medium rounded-xl transition-all shadow-lg hover:shadow-xl">
             View all integrations
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </a>

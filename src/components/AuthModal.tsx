@@ -128,42 +128,51 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="auth-modal-title"
     >
-      <div ref={modalRef} className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 via-blue-900/90 to-gray-900/95 backdrop-blur-2xl" />
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 -left-40 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      </div>
+
+      <div ref={modalRef} className="relative bg-white/20 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl w-full max-w-md p-8 animate-scaleIn">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl" />
+
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 transition-all border border-transparent hover:border-white/30 z-10 group"
           aria-label="Close modal"
         >
-          <X className="w-5 h-5 text-gray-500" aria-hidden="true" />
+          <X className="w-5 h-5 text-gray-700 group-hover:rotate-90 transition-transform duration-300" aria-hidden="true" />
         </button>
 
-        <div className="mb-8">
-          <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 ${
+        <div className="mb-8 relative">
+          <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 backdrop-blur-xl border ${
             mode === 'signin'
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-green-100 text-green-700'
+              ? 'bg-blue-500/20 text-blue-800 border-blue-500/30'
+              : 'bg-green-500/20 text-green-800 border-green-500/30'
           }`}>
             {mode === 'signin' ? 'Sign In' : 'Create New Account'}
           </div>
           <h2 id="auth-modal-title" className="text-3xl font-bold text-gray-900 mb-2">
             {mode === 'signin' ? 'Welcome back' : 'Get started free'}
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-700">
             {mode === 'signin'
               ? 'Sign in to your account to continue'
               : 'Create your account and start building with AI'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 relative">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
               Email
             </label>
             <input
@@ -172,13 +181,13 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-2">
               Password
             </label>
             <input
@@ -188,18 +197,18 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
               placeholder="••••••••"
               aria-describedby={mode === 'signup' ? 'password-requirements' : undefined}
             />
             {mode === 'signup' && (
-              <p id="password-requirements" className="mt-1 text-xs text-gray-500">At least 6 characters</p>
+              <p id="password-requirements" className="mt-1 text-xs text-gray-700">At least 6 characters</p>
             )}
           </div>
 
           {mode === 'signup' && (
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-800 mb-2">
                 Confirm Password
               </label>
               <input
@@ -209,20 +218,20 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
                 placeholder="••••••••"
               />
             </div>
           )}
 
           {error && (
-            <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            <div role="alert" className="p-3 bg-red-500/20 backdrop-blur-xl border border-red-500/30 rounded-xl text-sm text-red-900 shadow-lg">
               {error}
             </div>
           )}
 
           {success && (
-            <div role="alert" className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+            <div role="alert" className="p-3 bg-green-500/20 backdrop-blur-xl border border-green-500/30 rounded-xl text-sm text-green-900 shadow-lg">
               {success}
             </div>
           )}
@@ -230,16 +239,16 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl hover:from-blue-500 hover:to-cyan-500 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-xl border border-white/20 hover:shadow-2xl"
           >
             {loading ? 'Loading...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center relative">
           <button
             onClick={handleSwitchMode}
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+            className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
           >
             {mode === 'signin' ? (
               <>

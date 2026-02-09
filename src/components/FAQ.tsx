@@ -6,16 +6,18 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-4xl mx-auto">
+    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/30 to-gray-50 relative overflow-hidden">
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" />
+
+      <div className="max-w-4xl mx-auto relative">
         <div className="text-center mb-16">
-          <div className="inline-block px-4 py-2 bg-cyan-50 rounded-full text-sm font-medium text-cyan-900 mb-6">
+          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full text-sm font-medium text-gray-900 mb-6 shadow-lg">
             {faq.badge}
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             {faq.title}
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-700">
             {faq.subtitle}
           </p>
         </div>
@@ -24,11 +26,11 @@ export default function FAQ() {
           {faq.items.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden hover:border-gray-300 transition-colors"
+              className="bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 overflow-hidden hover:border-white/60 transition-all shadow-lg hover:shadow-xl"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-6 text-left"
+                className="w-full flex items-center justify-between p-6 text-left hover:bg-white/20 transition-all"
                 aria-expanded={openIndex === index}
                 aria-controls={`faq-answer-${index}`}
               >
@@ -39,14 +41,14 @@ export default function FAQ() {
                   {openIndex === index ? (
                     <Minus className="w-5 h-5 text-blue-600" aria-hidden="true" />
                   ) : (
-                    <Plus className="w-5 h-5 text-gray-400" aria-hidden="true" />
+                    <Plus className="w-5 h-5 text-gray-600" aria-hidden="true" />
                   )}
                 </div>
               </button>
 
               {openIndex === index && (
-                <div id={`faq-answer-${index}`} className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">
+                <div id={`faq-answer-${index}`} className="px-6 pb-6 bg-white/10">
+                  <p className="text-gray-700 leading-relaxed">
                     {item.answer}
                   </p>
                 </div>
@@ -56,10 +58,10 @@ export default function FAQ() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-700 mb-4 font-medium">
             {faq.contactText}
           </p>
-          <a href={faq.contactHref} className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+          <a href={faq.contactHref} className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-xl border border-white/30 text-blue-600 hover:text-blue-700 hover:bg-white/30 font-medium rounded-xl transition-all shadow-lg hover:shadow-xl">
             {faq.contactLinkText}
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </a>

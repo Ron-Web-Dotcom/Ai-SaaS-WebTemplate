@@ -47,10 +47,13 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-cyan-50/20 via-gray-50 to-blue-50/30 relative overflow-hidden">
+      <div className="absolute top-1/4 left-10 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/3 right-10 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+
+      <div className="max-w-7xl mx-auto relative">
         <div className="max-w-3xl mb-20">
-          <div className="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 text-gray-900 px-4 py-2 rounded-full text-sm font-medium mb-8 shadow-lg">
             What people say
           </div>
           <h2 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -59,10 +62,10 @@ export default function Testimonials() {
           <div className="flex items-center gap-4">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+                <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400 drop-shadow-lg" />
               ))}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-lg text-gray-700">
               <span className="font-bold text-gray-900">4.9/5</span> from 2,000+ reviews
             </div>
           </div>
@@ -72,7 +75,7 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="group bg-white rounded-3xl border border-gray-200 p-8 hover:border-gray-300 hover:shadow-2xl transition-all duration-500"
+              className="group bg-white/30 backdrop-blur-xl rounded-3xl border border-white/40 p-8 hover:border-white/60 hover:shadow-2xl transition-all duration-500"
             >
               <div className="flex gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
@@ -84,14 +87,14 @@ export default function Testimonials() {
                 "{testimonial.quote}"
               </blockquote>
 
-              <div className="flex items-center gap-4 pt-6 border-t border-gray-100">
-                <div className="w-14 h-14 bg-gradient-to-br from-gray-900 to-gray-800 rounded-full flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform">
+              <div className="flex items-center gap-4 pt-6 border-t border-white/30">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-lg border border-white/20">
                   {testimonial.image}
                 </div>
                 <div>
                   <div className="font-bold text-gray-900">{testimonial.author}</div>
-                  <div className="text-sm text-gray-600">{testimonial.role}</div>
-                  <div className="text-sm text-gray-500">{testimonial.company}</div>
+                  <div className="text-sm text-gray-700">{testimonial.role}</div>
+                  <div className="text-sm text-gray-600">{testimonial.company}</div>
                 </div>
               </div>
             </div>

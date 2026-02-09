@@ -41,13 +41,13 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-32 px-4 sm:px-6 lg:px-8 bg-white relative">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-400/5 rounded-full blur-3xl" />
+    <section id="features" className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-blue-50/30 to-gray-50 relative overflow-hidden">
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
 
       <div className="max-w-7xl mx-auto relative">
         <div className="max-w-3xl mb-24">
-          <div className="inline-flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl border border-white/30 text-gray-900 px-4 py-2 rounded-full text-sm font-medium mb-8 shadow-lg">
             Platform
           </div>
           <h2 className="text-5xl sm:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -55,7 +55,7 @@ export default function Features() {
             <br />
             Nothing you don't.
           </h2>
-          <p className="text-xl text-gray-600 leading-relaxed">
+          <p className="text-xl text-gray-700 leading-relaxed">
             Built for teams who refuse to compromise between power and simplicity.
           </p>
         </div>
@@ -68,12 +68,12 @@ export default function Features() {
             return (
               <div
                 key={index}
-                className="group relative p-8 bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-200 hover:border-gray-300 transition-all duration-500 hover:-translate-y-1"
+                className="group relative p-8 bg-white/20 backdrop-blur-xl rounded-3xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:-translate-y-1 shadow-xl hover:shadow-2xl"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="relative">
-                  <div className={`inline-flex items-center justify-center w-14 h-14 ${isBlue ? 'bg-gradient-to-br from-blue-600 to-blue-700' : 'bg-gradient-to-br from-cyan-600 to-cyan-700'} rounded-2xl mb-6 shadow-lg ${isBlue ? 'shadow-blue-600/20' : 'shadow-cyan-600/20'} group-hover:scale-110 transition-transform duration-500`}>
+                  <div className={`inline-flex items-center justify-center w-14 h-14 ${isBlue ? 'bg-gradient-to-br from-blue-600 to-blue-700' : 'bg-gradient-to-br from-cyan-600 to-cyan-700'} rounded-2xl mb-6 shadow-lg ${isBlue ? 'shadow-blue-600/30' : 'shadow-cyan-600/30'} group-hover:scale-110 transition-transform duration-500 border border-white/20`}>
                     <Icon className="w-7 h-7 text-white" />
                   </div>
 
@@ -81,11 +81,11 @@ export default function Features() {
                     {feature.title}
                   </h3>
 
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-700 leading-relaxed">
                     {feature.description}
                   </p>
 
-                  <div className={`mt-6 h-1 w-12 ${isBlue ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : 'bg-gradient-to-r from-cyan-600 to-blue-600'} rounded-full opacity-0 group-hover:opacity-100 group-hover:w-20 transition-all duration-500`} />
+                  <div className={`mt-6 h-1 w-12 ${isBlue ? 'bg-gradient-to-r from-blue-600 to-cyan-600' : 'bg-gradient-to-r from-cyan-600 to-blue-600'} rounded-full opacity-0 group-hover:opacity-100 group-hover:w-20 transition-all duration-500 shadow-lg`} />
                 </div>
               </div>
             );
