@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { ArrowRight, Zap, Shield, Layers } from 'lucide-react';
+import VideoModal from './VideoModal';
 
 const steps = [
   {
@@ -22,8 +24,15 @@ const steps = [
 ];
 
 export default function ProductExplainer() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
-    <section id="product" className="relative py-32 px-6 sm:px-8 lg:px-12 bg-gradient-to-b from-white via-blue-50/30 to-white overflow-hidden">
+    <>
+      <VideoModal
+        isOpen={isVideoOpen}
+        onClose={() => setIsVideoOpen(false)}
+      />
+      <section id="product" className="relative py-32 px-6 sm:px-8 lg:px-12 bg-gradient-to-b from-white via-blue-50/30 to-white overflow-hidden">
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-l from-blue-500/10 to-transparent blur-3xl" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-r from-cyan-500/10 to-transparent blur-3xl" />
 
@@ -81,25 +90,29 @@ export default function ProductExplainer() {
               <p className="text-xl text-gray-300 leading-relaxed">
                 Watch how leading companies use Nexus AI to transform their operations and drive measurable results.
               </p>
-              <a
-                href="#"
+              <button
+                onClick={() => setIsVideoOpen(true)}
                 className="inline-flex items-center gap-2.5 bg-white text-gray-900 px-10 py-5 rounded-2xl hover:bg-gray-50 transition-all duration-300 hover:shadow-xlarge hover:shadow-white/25 hover:scale-[1.02] font-bold text-lg group"
               >
                 <span>Watch Demo Video</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-              </a>
+              </button>
             </div>
 
             <div className="relative">
-              <div className="aspect-video bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-3xl border border-white/10 backdrop-blur-sm flex items-center justify-center group hover:scale-[1.03] transition-transform duration-500 shadow-large">
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="w-full aspect-video bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-3xl border border-white/10 backdrop-blur-sm flex items-center justify-center group hover:scale-[1.03] transition-transform duration-500 shadow-large cursor-pointer"
+              >
                 <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
                   <div className="w-0 h-0 border-l-[18px] border-l-white border-y-[12px] border-y-transparent ml-1" />
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </section>
+    </>
   );
 }
