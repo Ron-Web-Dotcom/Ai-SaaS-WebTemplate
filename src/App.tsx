@@ -1,3 +1,4 @@
+import { useAuth } from './contexts/AuthContext';
 import AnnouncementBar from './components/AnnouncementBar';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -12,8 +13,26 @@ import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
 
 function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-600 font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user) {
+    return <Dashboard />;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <AnnouncementBar />
