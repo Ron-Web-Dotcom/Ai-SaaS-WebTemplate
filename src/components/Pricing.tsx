@@ -1,4 +1,5 @@
 import { Check, Zap } from 'lucide-react';
+import { useAuthModal } from '../contexts/AuthModalContext';
 
 const plans = [
   {
@@ -53,6 +54,16 @@ const plans = [
 ];
 
 export default function Pricing() {
+  const { openSignUp } = useAuthModal();
+
+  const handleCtaClick = (ctaText: string) => {
+    if (ctaText === 'Contact Sales') {
+      window.location.href = 'mailto:sales@nexusai.com?subject=Enterprise Inquiry';
+    } else {
+      openSignUp();
+    }
+  };
+
   return (
     <section id="pricing" className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/30 via-cyan-50/20 to-gray-50 relative overflow-hidden">
       <div className="absolute top-1/3 left-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-float" />
@@ -130,6 +141,7 @@ export default function Pricing() {
               </ul>
 
               <button
+                onClick={() => handleCtaClick(plan.cta)}
                 className={`w-full py-4 px-6 rounded-xl font-semibold transition-all ${
                   plan.popular
                     ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow-xl border border-white/20'
