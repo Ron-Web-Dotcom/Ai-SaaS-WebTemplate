@@ -34,42 +34,50 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-cyan-50/10">
       {/* Top Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/50">
-        <div className="flex items-center justify-between h-16 px-6">
-          <div className="flex items-center gap-4">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-2xl border-b border-white/20 shadow-lg">
+        <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/20 rounded-xl transition-all border border-transparent hover:border-white/30 lg:hidden"
+              aria-label="Toggle sidebar"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="hidden lg:block p-2 hover:bg-white/20 rounded-xl transition-all border border-transparent hover:border-white/30"
+              aria-label="Toggle sidebar"
+            >
+              <Menu size={20} />
+            </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Sparkles size={18} className="text-white" />
               </div>
-              <span className="font-semibold text-slate-900">NexusAI</span>
+              <span className="font-semibold text-gray-900 hidden sm:inline">NexusAI</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm text-gray-700 bg-white/20 hover:bg-white/30 rounded-xl transition-all border border-white/30 backdrop-blur-xl"
             >
               <Search size={16} />
               <span className="hidden sm:inline">Search</span>
-              <kbd className="hidden sm:inline px-2 py-0.5 text-xs bg-white rounded border border-slate-300">⌘K</kbd>
+              <kbd className="hidden md:inline px-2 py-0.5 text-xs bg-white/30 rounded border border-white/30">⌘K</kbd>
             </button>
 
-            <button className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
-              <Bell size={20} className="text-slate-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+            <button className="relative p-2 hover:bg-white/20 rounded-xl transition-all border border-transparent hover:border-white/30">
+              <Bell size={20} className="text-gray-700" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full shadow-lg"></span>
             </button>
 
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+            <div className="hidden sm:flex items-center gap-3 pl-3 border-l border-white/20">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-lg">
                 {user?.email?.[0].toUpperCase()}
               </div>
             </div>
@@ -79,8 +87,8 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 bottom-0 z-40 bg-white border-r border-slate-200/50 transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-0'
+        className={`fixed left-0 top-16 bottom-0 z-40 bg-white/10 backdrop-blur-2xl border-r border-white/20 transition-all duration-300 shadow-xl ${
+          sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full lg:w-0 lg:translate-x-0'
         } overflow-hidden`}
       >
         <nav className="p-4 space-y-1">
@@ -89,11 +97,14 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
             return (
               <button
                 key={item.name}
-                onClick={() => onViewChange(item.view)}
+                onClick={() => {
+                  onViewChange(item.view);
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-xl border border-white/20'
+                    : 'text-gray-700 hover:bg-white/20 hover:text-gray-900 border border-transparent hover:border-white/30'
                 }`}
               >
                 <item.icon size={20} />
@@ -102,10 +113,10 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
             );
           })}
 
-          <div className="pt-4 mt-4 border-t border-slate-200">
+          <div className="pt-4 mt-4 border-t border-white/20">
             <button
               onClick={() => signOut()}
-              className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-500/10 hover:text-red-600 rounded-xl transition-all border border-transparent hover:border-red-500/30"
             >
               <LogOut size={20} />
               <span className="font-medium">Sign Out</span>
@@ -115,28 +126,39 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
 
         {/* Upgrade Card */}
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={16} />
-              <span className="text-sm font-semibold">Upgrade to Pro</span>
+          <div className="bg-gradient-to-br from-blue-600/90 to-cyan-600/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 text-white shadow-xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} />
+                <span className="text-sm font-semibold">Upgrade to Pro</span>
+              </div>
+              <p className="text-xs text-white/80 mb-3">
+                Unlock unlimited AI conversations and advanced features
+              </p>
+              <button className="w-full py-2 bg-white/20 backdrop-blur-xl text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-all border border-white/30">
+                Upgrade Now
+              </button>
             </div>
-            <p className="text-xs text-blue-100 mb-3">
-              Unlock unlimited AI conversations and advanced features
-            </p>
-            <button className="w-full py-2 bg-white text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
-              Upgrade Now
-            </button>
           </div>
         </div>
       </aside>
 
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
       <main
         className={`pt-16 transition-all duration-300 ${
-          sidebarOpen ? 'pl-64' : 'pl-0'
+          sidebarOpen ? 'lg:pl-64' : 'lg:pl-0'
         }`}
       >
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>
@@ -144,26 +166,26 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
       {/* Command Palette */}
       {searchOpen && (
         <div
-          className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-xl px-4"
           onClick={() => setSearchOpen(false)}
         >
           <div
-            className="max-w-2xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl"
+            className="max-w-2xl mx-auto mt-16 sm:mt-24 bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b border-slate-200">
+            <div className="p-4 border-b border-white/20">
               <div className="flex items-center gap-3">
-                <Search size={20} className="text-slate-400" />
+                <Search size={20} className="text-gray-700" />
                 <input
                   type="text"
                   placeholder="Search for anything..."
-                  className="flex-1 bg-transparent outline-none text-slate-900 placeholder-slate-400"
+                  className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-600"
                   autoFocus
                 />
               </div>
             </div>
             <div className="p-2 max-h-96 overflow-y-auto">
-              <div className="text-xs font-semibold text-slate-400 px-3 py-2">Recent</div>
+              <div className="text-xs font-semibold text-gray-700 px-3 py-2">Recent</div>
               {navigation.map((item) => (
                 <button
                   key={item.name}
@@ -171,10 +193,10 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
                     onViewChange(item.view);
                     setSearchOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-slate-50 rounded-lg transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-white/20 rounded-xl transition-all border border-transparent hover:border-white/30"
                 >
-                  <item.icon size={18} className="text-slate-400" />
-                  <span className="text-sm text-slate-900">{item.name}</span>
+                  <item.icon size={18} className="text-gray-700" />
+                  <span className="text-sm text-gray-900">{item.name}</span>
                 </button>
               ))}
             </div>

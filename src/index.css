@@ -7,6 +7,35 @@
   html {
     scroll-behavior: smooth;
   }
+
+  /* Optimize backdrop blur for mobile performance */
+  @media (max-width: 768px) {
+    .backdrop-blur-2xl {
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+    }
+
+    .backdrop-blur-xl {
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+  }
+
+  /* Reduce animation intensity on mobile for better performance */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-gradient {
+      animation: none !important;
+    }
+  }
+
+  /* Ensure minimum touch targets on mobile */
+  @media (max-width: 768px) {
+    button,
+    a[role="button"] {
+      min-height: 44px;
+    }
+  }
 }
 
 /* Custom animations */
