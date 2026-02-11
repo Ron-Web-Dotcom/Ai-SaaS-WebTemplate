@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Check, Zap } from 'lucide-react';
 import { useAuthModal } from '../contexts/AuthModalContext';
+import { useAuth } from '../contexts/AuthContext';
+import PaymentCheckoutModal from './PaymentCheckoutModal';
 
 const plans = [
   {
@@ -55,12 +58,20 @@ const plans = [
 
 export default function Pricing() {
   const { openSignUp } = useAuthModal();
+  const { user } = useAuth();
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
 
-  const handleCtaClick = (ctaText: string) => {
-    if (ctaText === 'Contact Sales') {
+  const handleCtaClick = (plan: typeof plans[0]) => {
+    if (plan.cta === 'Contact Sales') {
       window.location.href = 'mailto:sales@nexusai.com?subject=Enterprise Inquiry';
     } else {
-      openSignUp();
+      if (user) {
+        setSelectedPlan(plan);
+        setShowCheckout(true);
+      } else {
+        openSignUp();
+      }
     }
   };
 
@@ -141,7 +152,7 @@ export default function Pricing() {
               </ul>
 
               <button
-                onClick={() => handleCtaClick(plan.cta)}
+                onClick={() => handleCtaClick(plan)}
                 className={`w-full py-4 px-6 rounded-xl font-semibold transition-all ${
                   plan.popular
                     ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow-xl border border-white/20'
@@ -174,6 +185,14 @@ export default function Pricing() {
           </div>
         </div>
       </div>
+
+      {selectedPlan && (
+        <PaymentCheckoutModal
+          isOpen={showCheckout}
+          onClose={() => setShowCheckout(false)}
+          selectedPlan={selectedPlan}
+        />
+      )}
     </section>
   );
 }

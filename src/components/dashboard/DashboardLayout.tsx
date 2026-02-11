@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -10,9 +10,11 @@ import {
   X,
   Sparkles,
   Search,
-  Bell
+  Bell,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -23,7 +25,30 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children, currentView, onViewChange }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('is_admin, status')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (data?.is_admin && data?.status === 'active') {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    }
+  };
 
   const navigation = [
     { name: 'Dashboard', icon: LayoutDashboard, view: 'home' },
@@ -114,6 +139,15 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
           })}
 
           <div className="pt-4 mt-4 border-t border-white/20">
+            {isAdmin && (
+              <a
+                href="?admin=true"
+                className="w-full flex items-center gap-3 px-4 py-3 mb-2 text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl transition-all border border-purple-200"
+              >
+                <Shield size={20} />
+                <span className="font-medium">Admin Panel</span>
+              </a>
+            )}
             <button
               onClick={() => signOut()}
               className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-500/10 hover:text-red-600 rounded-xl transition-all border border-transparent hover:border-red-500/30"
