@@ -23,10 +23,6 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
 
-  useEffect(() => {
-    checkAdminStatus();
-  }, [user]);
-
   const checkAdminStatus = async () => {
     if (!user) {
       setCheckingAdmin(false);
@@ -53,6 +49,10 @@ function App() {
       setCheckingAdmin(false);
     }
   };
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, [user]);
 
   if (loading || checkingAdmin) {
     return (

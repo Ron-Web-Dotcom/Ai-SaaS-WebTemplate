@@ -40,6 +40,26 @@ Deno.serve(async (req: Request) => {
     const paypalClientId = Deno.env.get("PAYPAL_CLIENT_ID");
     const paypalSecret = Deno.env.get("PAYPAL_SECRET");
     const isSandbox = Deno.env.get("PAYPAL_SANDBOX") === "true";
+    const siteUrl = Deno.env.get("SITE_URL") || Deno.env.get("SUPABASE_URL");
+
+    if (!paypalClientId || !paypalSecret) {
+      return new Response(
+        JSON.stringify({
+          error: "PayPal payments are currently unavailable. Please try another payment method.",
+        }),
+        {
+          status: 503,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    if (!siteUrl) {
+      throw new Error("Site URL not configured");
+    }
 
     const baseUrl = isSandbox
       ? "https://api-m.sandbox.paypal.com"
@@ -66,8 +86,8 @@ Deno.serve(async (req: Request) => {
           },
         ],
         application_context: {
-          return_url: `${Deno.env.get("SITE_URL")}/dashboard?payment=success`,
-          cancel_url: `${Deno.env.get("SITE_URL")}/dashboard?payment=cancelled`,
+          return_url: `${siteUrl}/dashboard?payment=success`,
+          cancel_url: `${siteUrl}/dashboard?payment=cancelled`,
         },
       }),
     });

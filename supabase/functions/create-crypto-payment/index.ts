@@ -38,7 +38,26 @@ Deno.serve(async (req: Request) => {
     }
 
     const coinbaseApiKey = Deno.env.get("COINBASE_API_KEY");
-    const coinbaseApiSecret = Deno.env.get("COINBASE_API_SECRET");
+    const siteUrl = Deno.env.get("SITE_URL") || Deno.env.get("SUPABASE_URL");
+
+    if (!coinbaseApiKey) {
+      return new Response(
+        JSON.stringify({
+          error: "Cryptocurrency payments are currently unavailable. Please try another payment method.",
+        }),
+        {
+          status: 503,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    if (!siteUrl) {
+      throw new Error("Site URL not configured");
+    }
 
     const chargeData = {
       name: plan.name,
@@ -52,8 +71,8 @@ Deno.serve(async (req: Request) => {
         user_id: userId,
         plan: planName,
       },
-      redirect_url: `${Deno.env.get("SITE_URL")}/dashboard?payment=success`,
-      cancel_url: `${Deno.env.get("SITE_URL")}/dashboard?payment=cancelled`,
+      redirect_url: `${siteUrl}/dashboard?payment=success`,
+      cancel_url: `${siteUrl}/dashboard?payment=cancelled`,
     };
 
     const response = await fetch("https://api.commerce.coinbase.com/charges", {

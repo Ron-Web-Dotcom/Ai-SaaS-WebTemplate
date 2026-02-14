@@ -92,7 +92,7 @@ ${reference}
 Processing Time: 2-3 business days
 Your subscription will be activated once payment is verified.
 
-If you have any questions, please contact support@example.com
+If you have any questions, please contact ront.devops@gmail.com
     `.trim();
 
     return new Response(
