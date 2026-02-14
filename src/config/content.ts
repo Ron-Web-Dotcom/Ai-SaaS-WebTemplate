@@ -5,7 +5,7 @@ export const brand = {
   name: 'Nexus AI',
   tagline: 'AI-Powered Collaboration Platform',
   description: 'Transform your workflow with intelligent automation',
-  email: 'hello@nexusai.example.com',
+  email: 'ront.devops@gmail.com',
   phone: '+1 (555) 123-4567',
   address: '123 Innovation Drive, San Francisco, CA 94105',
 };
