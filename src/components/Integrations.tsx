@@ -17,7 +17,7 @@ const integrations = [
 
 export default function Integrations() {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-cyan-50/20 to-gray-50 relative overflow-hidden">
+    <section id="integrations" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-cyan-50/20 to-gray-50 relative overflow-hidden">
       <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
 

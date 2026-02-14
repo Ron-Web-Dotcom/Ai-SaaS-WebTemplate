@@ -47,7 +47,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-cyan-50/20 via-gray-50 to-blue-50/30 relative overflow-hidden">
+    <section id="testimonials" className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-cyan-50/20 via-gray-50 to-blue-50/30 relative overflow-hidden">
       <div className="absolute top-1/4 left-10 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-1/3 right-10 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
 
