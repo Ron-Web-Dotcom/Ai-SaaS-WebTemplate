@@ -1,5 +1,4 @@
-import React from 'react';
-import { LayoutDashboard, Users, CreditCard, TrendingUp, DollarSign, Settings, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, DollarSign, Settings, LogOut, Home } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 type AdminView = 'overview' | 'users' | 'subscriptions' | 'analytics' | 'payments' | 'settings';

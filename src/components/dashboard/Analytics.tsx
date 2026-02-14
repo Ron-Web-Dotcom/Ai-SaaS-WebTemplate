@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   TrendingUp,
-  Calendar,
   Zap,
   MessageSquare,
   BarChart3,

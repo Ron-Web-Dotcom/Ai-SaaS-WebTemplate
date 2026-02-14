@@ -170,7 +170,12 @@ export default function DashboardLayout({ children, currentView, onViewChange }:
               <p className="text-xs text-white/80 mb-3">
                 Unlock unlimited AI conversations and advanced features
               </p>
-              <button className="w-full py-2 bg-white/20 backdrop-blur-xl text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-all border border-white/30">
+              <button
+                onClick={() => {
+                  window.location.href = '/#pricing';
+                }}
+                className="w-full py-2 bg-white/20 backdrop-blur-xl text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-all border border-white/30"
+              >
                 Upgrade Now
               </button>
             </div>

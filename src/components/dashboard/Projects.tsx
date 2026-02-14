@@ -49,11 +49,11 @@ export default function Projects() {
   const loadProjects = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('projects')
       .select('*')
       .eq('user_id', user.id)
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false});
 
     if (data) {
       setProjects(data);

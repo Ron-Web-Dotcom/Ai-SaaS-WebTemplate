@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   User,
   Bell,
-  Shield,
-  Palette,
   Database,
-  Key,
   Save,
   Crown
 } from 'lucide-react';
@@ -34,7 +31,7 @@ export default function Settings() {
   const loadProfile = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)

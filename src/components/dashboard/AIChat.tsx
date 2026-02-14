@@ -6,8 +6,7 @@ import {
   Sparkles,
   User,
   Clock,
-  Trash2,
-  Edit3
+  Trash2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -55,7 +54,7 @@ export default function AIChat() {
   const loadConversations = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('conversations')
       .select('id, title, updated_at')
       .eq('user_id', user.id)
@@ -70,7 +69,7 @@ export default function AIChat() {
   };
 
   const loadMessages = async (conversationId: string) => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('messages')
       .select('*')
       .eq('conversation_id', conversationId)
@@ -84,7 +83,7 @@ export default function AIChat() {
   const createNewConversation = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('conversations')
       .insert({
         user_id: user.id,
@@ -108,7 +107,7 @@ export default function AIChat() {
     setInput('');
     setLoading(true);
 
-    const { data: userMsg, error: userError } = await supabase
+    const { data: userMsg } = await supabase
       .from('messages')
       .insert({
         conversation_id: currentConversation,
@@ -124,7 +123,7 @@ export default function AIChat() {
 
       const aiResponse = `This is a simulated AI response. In production, this would connect to your AI service of choice (OpenAI, Anthropic, etc.). Your message was: "${userMessage}"`;
 
-      const { data: aiMsg, error: aiError } = await supabase
+      const { data: aiMsg } = await supabase
         .from('messages')
         .insert({
           conversation_id: currentConversation,

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Save, Settings, CreditCard, Bell, Shield, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Save, Settings, CreditCard, Bell, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 

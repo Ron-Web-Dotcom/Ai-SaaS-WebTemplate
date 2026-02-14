@@ -27,7 +27,11 @@ interface RecentActivity {
   timestamp: string;
 }
 
-export default function DashboardHome() {
+interface DashboardHomeProps {
+  onViewChange: (view: string) => void;
+}
+
+export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalConversations: 0,
@@ -202,6 +206,7 @@ export default function DashboardHome() {
           {quickActions.map((action, index) => (
             <button
               key={index}
+              onClick={() => onViewChange(action.action)}
               className="group bg-white rounded-xl p-6 border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all text-left"
             >
               <div className={`inline-flex p-3 bg-gradient-to-br ${action.color} rounded-xl mb-4`}>

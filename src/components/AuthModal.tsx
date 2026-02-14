@@ -83,11 +83,6 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!supabase) {
-      setError('Authentication is currently unavailable. Please try again later.');
-      return;
-    }
-
     if (mode === 'signup' && password !== confirmPassword) {
       setError('Passwords do not match');
       return;

@@ -11,10 +11,14 @@ type View = 'home' | 'chat' | 'projects' | 'analytics' | 'settings';
 export default function Dashboard() {
   const [currentView, setCurrentView] = useState<View>('home');
 
+  const handleViewChange = (view: string) => {
+    setCurrentView(view as View);
+  };
+
   const renderView = () => {
     switch (currentView) {
       case 'home':
-        return <DashboardHome />;
+        return <DashboardHome onViewChange={handleViewChange} />;
       case 'chat':
         return <AIChat />;
       case 'projects':
@@ -24,12 +28,12 @@ export default function Dashboard() {
       case 'settings':
         return <Settings />;
       default:
-        return <DashboardHome />;
+        return <DashboardHome onViewChange={handleViewChange} />;
     }
   };
 
   return (
-    <DashboardLayout currentView={currentView} onViewChange={(view) => setCurrentView(view as View)}>
+    <DashboardLayout currentView={currentView} onViewChange={handleViewChange}>
       {renderView()}
     </DashboardLayout>
   );
