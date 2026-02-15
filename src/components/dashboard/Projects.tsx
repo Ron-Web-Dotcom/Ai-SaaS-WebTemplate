@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface Project {
   id: string;
@@ -36,6 +37,8 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -98,9 +101,21 @@ export default function Projects() {
   };
 
   const deleteProject = async (id: string) => {
-    if (confirm('Are you sure you want to delete this project?')) {
-      await supabase.from('projects').delete().eq('id', id);
+    setProjectToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      const { error } = await supabase.from('projects').delete().eq('id', projectToDelete);
+      if (error) throw error;
       loadProjects();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    } finally {
+      setProjectToDelete(null);
     }
   };
 
@@ -272,6 +287,17 @@ export default function Projects() {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   );
 }

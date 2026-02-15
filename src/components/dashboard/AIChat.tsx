@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface Message {
   id: string;
@@ -31,6 +32,8 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -197,18 +200,27 @@ export default function AIChat() {
   };
 
   const deleteConversation = async (id: string) => {
+    setConversationToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!conversationToDelete) return;
+
     try {
-      const { error } = await supabase.from('conversations').delete().eq('id', id);
+      const { error } = await supabase.from('conversations').delete().eq('id', conversationToDelete);
 
       if (error) throw error;
 
-      setConversations(conversations.filter(c => c.id !== id));
-      if (currentConversation === id) {
+      setConversations(conversations.filter(c => c.id !== conversationToDelete));
+      if (currentConversation === conversationToDelete) {
         setCurrentConversation(null);
         setMessages([]);
       }
     } catch (error) {
       console.error('Error deleting conversation:', error);
+    } finally {
+      setConversationToDelete(null);
     }
   };
 
@@ -377,6 +389,17 @@ export default function AIChat() {
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Delete Conversation"
+        message="Are you sure you want to delete this conversation? All messages will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+      />
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { X, Check, CreditCard, Wallet, Bitcoin, Building2, AlertCircle, Shield } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import BankTransferModal from './BankTransferModal';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 interface PaymentMethod {
   id: string;
@@ -37,6 +39,13 @@ export default function PaymentCheckoutModal({
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [error, setError] = useState('');
+  const [showBankTransfer, setShowBankTransfer] = useState(false);
+  const [bankTransferData, setBankTransferData] = useState<{
+    reference: string;
+    instructions: string;
+    amount: number;
+    bankDetails: any;
+  } | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -117,7 +126,7 @@ export default function PaymentCheckoutModal({
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`;
 
-      const response = await fetch(apiUrl, {
+      const response = await fetchWithTimeout(apiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -127,7 +136,7 @@ export default function PaymentCheckoutModal({
           planName: selectedPlan.name.toLowerCase(),
           userId: user?.id,
         }),
-      });
+      }, 30000);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
@@ -155,7 +164,7 @@ export default function PaymentCheckoutModal({
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-paypal-payment`;
 
-      const response = await fetch(apiUrl, {
+      const response = await fetchWithTimeout(apiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -165,7 +174,7 @@ export default function PaymentCheckoutModal({
           planName: selectedPlan.name.toLowerCase(),
           userId: user?.id,
         }),
-      });
+      }, 30000);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
@@ -193,7 +202,7 @@ export default function PaymentCheckoutModal({
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-crypto-payment`;
 
-      const response = await fetch(apiUrl, {
+      const response = await fetchWithTimeout(apiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -203,7 +212,7 @@ export default function PaymentCheckoutModal({
           planName: selectedPlan.name.toLowerCase(),
           userId: user?.id,
         }),
-      });
+      }, 30000);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
@@ -231,7 +240,7 @@ export default function PaymentCheckoutModal({
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-bank-transfer`;
 
-      const response = await fetch(apiUrl, {
+      const response = await fetchWithTimeout(apiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -241,7 +250,7 @@ export default function PaymentCheckoutModal({
           planName: selectedPlan.name.toLowerCase(),
           userId: user?.id,
         }),
-      });
+      }, 30000);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
@@ -254,8 +263,14 @@ export default function PaymentCheckoutModal({
         throw new Error(data.error);
       }
 
-      alert(`Bank Transfer Instructions:\n\n${data.instructions}\n\nReference: ${data.reference}`);
-      onClose();
+      setBankTransferData({
+        reference: data.reference,
+        instructions: data.instructions,
+        amount: data.amount,
+        bankDetails: data.bankDetails,
+      });
+      setShowBankTransfer(true);
+      setLoading(false);
     } catch (error) {
       console.error('Bank transfer error:', error);
       throw error;
@@ -290,8 +305,8 @@ export default function PaymentCheckoutModal({
               </div>
               <p className="text-sm text-gray-600 mb-3">{selectedPlan.description}</p>
               <div className="grid grid-cols-2 gap-2">
-                {selectedPlan.features.slice(0, 4).map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm text-gray-700">
+                {selectedPlan.features.slice(0, 4).map((feature) => (
+                  <div key={feature} className="flex items-center gap-2 text-sm text-gray-700">
                     <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
                     <span>{feature}</span>
                   </div>
@@ -397,6 +412,20 @@ export default function PaymentCheckoutModal({
       </div>
 
       {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+
+      {showBankTransfer && bankTransferData && (
+        <BankTransferModal
+          isOpen={showBankTransfer}
+          onClose={() => {
+            setShowBankTransfer(false);
+            onClose();
+          }}
+          reference={bankTransferData.reference}
+          instructions={bankTransferData.instructions}
+          amount={bankTransferData.amount}
+          bankDetails={bankTransferData.bankDetails}
+        />
+      )}
     </>
   );
 }

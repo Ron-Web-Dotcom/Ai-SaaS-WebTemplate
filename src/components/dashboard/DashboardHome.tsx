@@ -203,9 +203,9 @@ export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((stat, index) => (
+        {statCards.map((stat) => (
           <div
-            key={index}
+            key={stat.title}
             className="bg-white rounded-xl p-6 border border-slate-200/50 hover:shadow-lg transition-shadow"
           >
             <div className="flex items-center justify-between mb-4">
@@ -227,9 +227,9 @@ export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
           Quick Actions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {quickActions.map((action, index) => (
+          {quickActions.map((action) => (
             <button
-              key={index}
+              key={action.action}
               onClick={() => onViewChange(action.action)}
               className="group bg-white rounded-xl p-6 border border-slate-200/50 hover:shadow-xl hover:scale-105 transition-all text-left"
             >

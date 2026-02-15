@@ -11,11 +11,11 @@ interface PaymentRequest {
   userId: string;
 }
 
-const planPrices = {
+const PLAN_PRICES = {
   starter: { amount: 49, name: "Starter Plan" },
   professional: { amount: 199, name: "Professional Plan" },
   enterprise: { amount: 299, name: "Enterprise Plan" },
-};
+} as const;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
       throw new Error("Missing required fields: planName and userId");
     }
 
-    const plan = planPrices[planName as keyof typeof planPrices];
+    const plan = PLAN_PRICES[planName as keyof typeof PLAN_PRICES];
     if (!plan) {
       throw new Error("Invalid plan name");
     }

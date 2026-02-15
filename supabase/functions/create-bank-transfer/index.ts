@@ -18,6 +18,17 @@ const planPrices = {
   enterprise: { amount: 299, name: "Enterprise Plan" },
 };
 
+const getBankDetails = () => ({
+  accountName: Deno.env.get("BANK_ACCOUNT_NAME") || "Your Company Name LLC",
+  accountNumber: Deno.env.get("BANK_ACCOUNT_NUMBER") || "1234567890",
+  routingNumber: Deno.env.get("BANK_ROUTING_NUMBER") || "021000021",
+  swiftCode: Deno.env.get("BANK_SWIFT_CODE") || "CHASUS33",
+  bankName: Deno.env.get("BANK_NAME") || "Chase Bank",
+  bankAddress: Deno.env.get("BANK_ADDRESS") || "New York, NY",
+});
+
+const SUPPORT_EMAIL = Deno.env.get("SUPPORT_EMAIL") || "support@nexusai.com";
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -64,14 +75,7 @@ Deno.serve(async (req: Request) => {
       throw new Error(`Failed to create transaction: ${transactionError.message}`);
     }
 
-    const bankDetails = {
-      accountName: "Your Company Name LLC",
-      accountNumber: "1234567890",
-      routingNumber: "021000021",
-      swiftCode: "CHASUS33",
-      bankName: "Chase Bank",
-      bankAddress: "New York, NY",
-    };
+    const bankDetails = getBankDetails();
 
     const instructions = `
 Bank Transfer Instructions:
@@ -92,7 +96,7 @@ ${reference}
 Processing Time: 2-3 business days
 Your subscription will be activated once payment is verified.
 
-If you have any questions, please contact ront.devops@gmail.com
+If you have any questions, please contact ${SUPPORT_EMAIL}
     `.trim();
 
     return new Response(
