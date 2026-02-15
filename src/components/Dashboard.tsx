@@ -5,11 +5,14 @@ import AIChat from './dashboard/AIChat';
 import Projects from './dashboard/Projects';
 import Analytics from './dashboard/Analytics';
 import Settings from './dashboard/Settings';
+import TrialExpiredModal from './TrialExpiredModal';
+import { useTrialStatus } from '../hooks/useTrialStatus';
 
 type View = 'home' | 'chat' | 'projects' | 'analytics' | 'settings';
 
 export default function Dashboard() {
   const [currentView, setCurrentView] = useState<View>('home');
+  const { isExpired } = useTrialStatus();
 
   const handleViewChange = (view: string) => {
     setCurrentView(view as View);
@@ -33,8 +36,11 @@ export default function Dashboard() {
   };
 
   return (
-    <DashboardLayout currentView={currentView} onViewChange={handleViewChange}>
-      {renderView()}
-    </DashboardLayout>
+    <>
+      <DashboardLayout currentView={currentView} onViewChange={handleViewChange}>
+        {renderView()}
+      </DashboardLayout>
+      <TrialExpiredModal isOpen={isExpired} />
+    </>
   );
 }

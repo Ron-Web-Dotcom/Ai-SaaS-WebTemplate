@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import TrialBanner from '../TrialBanner';
+import { useState as useStateLocal } from 'react';
+import PaymentCheckoutModal from '../PaymentCheckoutModal';
 
 interface Stats {
   totalConversations: number;
@@ -41,6 +44,25 @@ export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const enterprisePlan = {
+    name: 'Enterprise',
+    price: '999',
+    description: 'Complete platform access with unlimited features',
+    features: [
+      'Unlimited API calls',
+      'Unlimited team members',
+      'Enterprise analytics',
+      'Dedicated support',
+      'Custom models',
+      'On-premise deployment',
+      'SLA guarantee',
+      'Training & onboarding'
+    ],
+    cta: 'Upgrade to Enterprise',
+    popular: true
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -161,6 +183,8 @@ export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
+      <TrialBanner onUpgradeClick={() => setShowUpgradeModal(true)} />
+
       {/* Welcome Header */}
       <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-50"></div>
@@ -287,6 +311,14 @@ export default function DashboardHome({ onViewChange }: DashboardHomeProps) {
           </div>
         </div>
       </div>
+
+      {showUpgradeModal && (
+        <PaymentCheckoutModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          selectedPlan={enterprisePlan}
+        />
+      )}
     </div>
   );
 }
