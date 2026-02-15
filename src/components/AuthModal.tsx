@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mode: 'signin' | 'signup';
+  mode: 'signin' | 'signup' | 'forgot-password' | 'reset-password';
   onSwitchMode: () => void;
 }
 
@@ -13,10 +13,17 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetCode, setResetCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showResetCode, setShowResetCode] = useState(false);
+  const [currentMode, setCurrentMode] = useState(mode);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentMode(mode);
+  }, [mode]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -60,8 +67,10 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setResetCode('');
     setError('');
     setSuccess('');
+    setShowResetCode(false);
     onClose();
   };
 
@@ -69,9 +78,32 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setResetCode('');
     setError('');
     setSuccess('');
+    setShowResetCode(false);
     onSwitchMode();
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string): { valid: boolean; message: string } => {
+    if (password.length < 6) {
+      return { valid: false, message: 'Password must be at least 6 characters long' };
+    }
+    if (!/[A-Z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one uppercase letter' };
+    }
+    if (!/[a-z]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one lowercase letter' };
+    }
+    if (!/[0-9]/.test(password)) {
+      return { valid: false, message: 'Password must contain at least one number' };
+    }
+    return { valid: true, message: '' };
   };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -83,8 +115,26 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (mode === 'signup' && password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (currentMode === 'signup') {
+      if (password !== confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.valid) {
+        setError(passwordValidation.message);
+        return;
+      }
+    }
+
+    if (currentMode === 'signin' && password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
@@ -93,26 +143,79 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
     setSuccess('');
 
     try {
-      if (mode === 'signup') {
+      if (currentMode === 'signup') {
         const { error } = await supabase.auth.signUp({
           email,
           password,
         });
-        if (error) throw error;
+
+        if (error) {
+          if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+            setError('This email is already in use. Please sign in or use a different email.');
+          } else {
+            throw error;
+          }
+          setLoading(false);
+          return;
+        }
+
         setSuccess('Account created successfully! You can now sign in.');
         setTimeout(() => {
           handleSwitchMode();
         }, 2000);
-      } else {
+      } else if (currentMode === 'signin') {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+
+        if (error) {
+          if (error.message.includes('Invalid login credentials')) {
+            setError('Invalid email or password. Please try again.');
+          } else {
+            throw error;
+          }
+          setLoading(false);
+          return;
+        }
+
         setSuccess('Signed in successfully!');
         setTimeout(() => {
           handleClose();
         }, 1000);
+      } else if (currentMode === 'forgot-password') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+
+        if (error) throw error;
+
+        setSuccess('Password reset link sent to your email!');
+        setShowResetCode(true);
+      } else if (currentMode === 'reset-password') {
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.valid) {
+          setError(passwordValidation.message);
+          setLoading(false);
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.updateUser({
+          password: password,
+        });
+
+        if (error) throw error;
+
+        setSuccess('Password updated successfully! Please sign in.');
+        setTimeout(() => {
+          setCurrentMode('signin');
+        }, 2000);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -133,9 +236,22 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
           redirectTo: `${window.location.origin}/dashboard`,
         },
       });
-      if (error) throw error;
+
+      if (error) {
+        if (error.message.includes('already registered') || error.message.includes('already exists')) {
+          setError('This email is already in use. Please sign in with your password or try a different account.');
+        } else {
+          throw error;
+        }
+        setLoading(false);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      if (errorMessage.includes('already registered') || errorMessage.includes('already exists')) {
+        setError('This email is already in use. Please sign in with your password or try a different account.');
+      } else {
+        setError(errorMessage);
+      }
       setLoading(false);
     }
   };
@@ -168,19 +284,25 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
 
         <div className="mb-8 relative">
           <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 backdrop-blur-xl border ${
-            mode === 'signin'
+            currentMode === 'signin'
               ? 'bg-blue-500/20 text-blue-800 border-blue-500/30'
-              : 'bg-green-500/20 text-green-800 border-green-500/30'
+              : currentMode === 'signup'
+              ? 'bg-green-500/20 text-green-800 border-green-500/30'
+              : 'bg-amber-500/20 text-amber-800 border-amber-500/30'
           }`}>
-            {mode === 'signin' ? 'Sign In' : 'Create New Account'}
+            {currentMode === 'signin' ? 'Sign In' : currentMode === 'signup' ? 'Create New Account' : 'Reset Password'}
           </div>
           <h2 id="auth-modal-title" className="text-3xl font-bold text-gray-900 mb-2">
-            {mode === 'signin' ? 'Welcome back' : 'Get started free'}
+            {currentMode === 'signin' ? 'Welcome back' : currentMode === 'signup' ? 'Get started free' : 'Reset your password'}
           </h2>
           <p className="text-gray-700">
-            {mode === 'signin'
+            {currentMode === 'signin'
               ? 'Sign in to your account to continue'
-              : 'Create your account and start building with AI'}
+              : currentMode === 'signup'
+              ? 'Create your account and start building with AI'
+              : currentMode === 'forgot-password'
+              ? 'Enter your email to receive a password reset link'
+              : 'Enter your new password'}
           </p>
         </div>
 
@@ -200,27 +322,42 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-2">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
-              placeholder="••••••••"
-              aria-describedby={mode === 'signup' ? 'password-requirements' : undefined}
-            />
-            {mode === 'signup' && (
-              <p id="password-requirements" className="mt-1 text-xs text-gray-700">At least 6 characters</p>
-            )}
-          </div>
+          {currentMode !== 'forgot-password' && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-800">
+                  Password
+                </label>
+                {currentMode === 'signin' && (
+                  <button
+                    type="button"
+                    onClick={() => setCurrentMode('forgot-password')}
+                    className="text-xs text-blue-700 hover:text-blue-900 font-medium transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
+                placeholder="••••••••"
+                aria-describedby={currentMode === 'signup' || currentMode === 'reset-password' ? 'password-requirements' : undefined}
+              />
+              {(currentMode === 'signup' || currentMode === 'reset-password') && (
+                <p id="password-requirements" className="mt-1 text-xs text-gray-700">
+                  At least 6 characters with uppercase, lowercase, and number
+                </p>
+              )}
+            </div>
+          )}
 
-          {mode === 'signup' && (
+          {(currentMode === 'signup' || currentMode === 'reset-password') && (
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-800 mb-2">
                 Confirm Password
@@ -255,16 +392,17 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl hover:from-blue-500 hover:to-cyan-500 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-xl border border-white/20 hover:shadow-2xl"
           >
-            {loading ? 'Loading...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+            {loading ? 'Loading...' : currentMode === 'signin' ? 'Sign In' : currentMode === 'signup' ? 'Create Account' : currentMode === 'forgot-password' ? 'Send Reset Link' : 'Update Password'}
           </button>
         </form>
 
-        <div className="mt-6 relative">
-          <div className="relative flex items-center my-6">
-            <div className="flex-grow border-t border-white/30"></div>
-            <span className="flex-shrink mx-4 text-sm text-gray-700">Or continue with</span>
-            <div className="flex-grow border-t border-white/30"></div>
-          </div>
+        {currentMode !== 'forgot-password' && currentMode !== 'reset-password' && (
+          <div className="mt-6 relative">
+            <div className="relative flex items-center my-6">
+              <div className="flex-grow border-t border-white/30"></div>
+              <span className="flex-shrink mx-4 text-sm text-gray-700">Or continue with</span>
+              <div className="flex-grow border-t border-white/30"></div>
+            </div>
 
           <div className="space-y-3">
             <button
@@ -295,22 +433,39 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
             </button>
           </div>
         </div>
+        )}
 
         <div className="mt-6 text-center relative">
-          <button
-            onClick={handleSwitchMode}
-            className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
-          >
-            {mode === 'signin' ? (
-              <>
-                Don't have an account? <span className="font-semibold">Sign up</span>
-              </>
-            ) : (
-              <>
-                Already have an account? <span className="font-semibold">Sign in</span>
-              </>
-            )}
-          </button>
+          {currentMode === 'forgot-password' ? (
+            <button
+              onClick={() => setCurrentMode('signin')}
+              className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              Remember your password? <span className="font-semibold">Sign in</span>
+            </button>
+          ) : currentMode === 'reset-password' ? (
+            <button
+              onClick={() => setCurrentMode('signin')}
+              className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              Back to <span className="font-semibold">Sign in</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleSwitchMode}
+              className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              {currentMode === 'signin' ? (
+                <>
+                  Don't have an account? <span className="font-semibold">Sign up</span>
+                </>
+              ) : (
+                <>
+                  Already have an account? <span className="font-semibold">Sign in</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
