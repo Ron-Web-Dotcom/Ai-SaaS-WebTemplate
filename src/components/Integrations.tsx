@@ -36,9 +36,9 @@ export default function Integrations() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {integrations.map((integration, index) => (
+          {integrations.map((integration) => (
             <div
-              key={index}
+              key={integration.name}
               className="group bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 p-6 hover:border-white/60 hover:shadow-xl transition-all cursor-pointer"
             >
               <div className="flex flex-col items-center text-center space-y-3">

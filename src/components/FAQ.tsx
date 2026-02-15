@@ -25,14 +25,14 @@ export default function FAQ() {
         <div className="space-y-4">
           {faq.items.map((item, index) => (
             <div
-              key={index}
+              key={item.question}
               className="bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 overflow-hidden hover:border-white/60 transition-all shadow-lg hover:shadow-xl"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="w-full flex items-center justify-between p-6 text-left hover:bg-white/20 transition-all"
                 aria-expanded={openIndex === index}
-                aria-controls={`faq-answer-${index}`}
+                aria-controls={`faq-answer-${item.question.replace(/\s+/g, '-').toLowerCase()}`}
               >
                 <span className="font-semibold text-gray-900 text-lg pr-8">
                   {item.question}
@@ -47,7 +47,7 @@ export default function FAQ() {
               </button>
 
               {openIndex === index && (
-                <div id={`faq-answer-${index}`} className="px-6 pb-6 bg-white/10">
+                <div id={`faq-answer-${item.question.replace(/\s+/g, '-').toLowerCase()}`} className="px-6 pb-6 bg-white/10">
                   <p className="text-gray-700 leading-relaxed">
                     {item.answer}
                   </p>

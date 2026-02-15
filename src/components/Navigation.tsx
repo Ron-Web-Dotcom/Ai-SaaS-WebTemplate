@@ -1,5 +1,5 @@
 import { Menu, X, LogOut, User } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthModal } from '../contexts/AuthModalContext';
 import { brand, navigation, cta } from '../config/content';
@@ -13,8 +13,34 @@ export default function Navigation() {
     setIsOpen(false);
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   return (
-    <nav className="bg-white/10 backdrop-blur-2xl sticky top-0 z-50 border-b border-white/20 shadow-2xl">
+    <nav
+      className="bg-white/10 backdrop-blur-2xl sticky top-0 z-50 border-b border-white/20 shadow-2xl"
+      role="navigation"
+      aria-label="Main navigation"
+    >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-12">

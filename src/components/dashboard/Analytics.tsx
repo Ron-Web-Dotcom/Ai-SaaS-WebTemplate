@@ -184,8 +184,8 @@ export default function Analytics() {
                 </div>
               </div>
               <div className="space-y-3">
-                {usageData.slice(-14).map((data, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                {usageData.slice(-14).map((data) => (
+                  <div key={data.date} className="flex items-center gap-3">
                     <div className="text-xs text-slate-500 w-20">
                       {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </div>
@@ -218,8 +218,8 @@ export default function Analytics() {
                 </div>
               </div>
               <div className="space-y-3">
-                {usageData.slice(-14).map((data, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                {usageData.slice(-14).map((data) => (
+                  <div key={data.date} className="flex items-center gap-3">
                     <div className="text-xs text-slate-500 w-20">
                       {new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </div>

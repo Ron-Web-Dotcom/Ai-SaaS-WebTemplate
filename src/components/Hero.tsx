@@ -36,9 +36,9 @@ export default function Hero() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
               </button>
               <div className="flex flex-wrap gap-3 text-xs text-gray-700 sm:pl-2">
-                {hero.trustBadges.map((badge, index) => (
+                {hero.trustBadges.map((badge) => (
                   <span
-                    key={index}
+                    key={badge}
                     className="inline-flex items-center px-4 py-2.5 bg-white/30 backdrop-blur-xl border border-white/40 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-white/40 transition-all duration-200"
                   >
                     {badge}

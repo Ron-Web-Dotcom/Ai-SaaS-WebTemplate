@@ -96,9 +96,9 @@ export default function Pricing() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <div
-              key={index}
+              key={plan.name}
               className={`relative rounded-3xl p-10 ${
                 plan.popular
                   ? 'bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-2 border-white/30 text-white shadow-2xl scale-105'

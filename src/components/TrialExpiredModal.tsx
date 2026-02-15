@@ -64,8 +64,8 @@ export default function TrialExpiredModal({ isOpen }: TrialExpiredModalProps) {
             </p>
 
             <div className="grid grid-cols-2 gap-3 mb-6">
-              {enterprisePlan.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2">
+              {enterprisePlan.features.map((feature) => (
+                <div key={feature} className="flex items-center gap-2">
                   <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

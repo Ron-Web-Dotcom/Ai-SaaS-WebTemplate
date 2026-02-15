@@ -33,12 +33,12 @@ export default function Footer() {
             </div>
           </div>
 
-          {footer.sections.map((section, index) => (
-            <nav key={index} aria-label={section.title}>
+          {footer.sections.map((section) => (
+            <nav key={section.title} aria-label={section.title}>
               <h3 className="font-semibold text-white mb-4">{section.title}</h3>
               <ul className="space-y-3 text-sm">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
+                {section.links.map((link) => (
+                  <li key={link.label}>
                     <a href={link.href} className="hover:text-blue-400 transition-colors">
                       {link.label}
                     </a>
@@ -54,8 +54,8 @@ export default function Footer() {
             {footer.copyright}
           </p>
           <div className="flex gap-6 text-sm">
-            {footer.sections[3]?.links.slice(0, 3).map((link, index) => (
-              <a key={index} href={link.href} className="hover:text-blue-400 transition-colors">
+            {footer.sections[3]?.links.slice(0, 3).map((link) => (
+              <a key={link.label} href={link.href} className="hover:text-blue-400 transition-colors">
                 {link.label}
               </a>
             ))}

@@ -49,11 +49,11 @@ export default function ProductExplainer() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 mb-20">
-          {steps.map((step, index) => {
+          {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div
-                key={index}
+                key={step.title}
                 className="group relative bg-white/25 backdrop-blur-xl rounded-3xl p-10 border border-white/40 hover:border-white/60 hover:shadow-2xl transition-all duration-500"
               >
                 <div className="absolute top-8 right-8 text-7xl font-extrabold text-white/20 group-hover:text-blue-500/20 transition-colors">

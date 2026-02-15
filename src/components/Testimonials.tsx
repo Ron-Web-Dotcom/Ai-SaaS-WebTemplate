@@ -72,9 +72,9 @@ export default function Testimonials() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.author}
               className="group bg-white/30 backdrop-blur-xl rounded-3xl border border-white/40 p-8 hover:border-white/60 hover:shadow-2xl transition-all duration-500"
             >
               <div className="flex gap-1 mb-6">

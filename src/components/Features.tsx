@@ -61,13 +61,13 @@ export default function Features() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const Icon = feature.icon;
             const isBlue = feature.color === 'blue';
 
             return (
               <div
-                key={index}
+                key={feature.title}
                 className="group relative p-8 bg-white/20 backdrop-blur-xl rounded-3xl border border-white/30 hover:border-white/50 transition-all duration-500 hover:-translate-y-1 shadow-xl hover:shadow-2xl"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

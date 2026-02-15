@@ -49,11 +49,11 @@ export default function UseCases() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {useCases.map((useCase, index) => {
+          {useCases.map((useCase) => {
             const Icon = useCase.icon;
             return (
               <div
-                key={index}
+                key={useCase.title}
                 className="group relative bg-white/25 backdrop-blur-xl rounded-3xl border border-white/40 p-10 hover:border-white/60 hover:shadow-2xl transition-all duration-500 overflow-hidden"
               >
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full group-hover:scale-150 transition-transform duration-700" />

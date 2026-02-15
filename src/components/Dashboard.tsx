@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import DashboardLayout from './dashboard/DashboardLayout';
-import DashboardHome from './dashboard/DashboardHome';
-import AIChat from './dashboard/AIChat';
-import Projects from './dashboard/Projects';
-import Analytics from './dashboard/Analytics';
-import Settings from './dashboard/Settings';
 import TrialExpiredModal from './TrialExpiredModal';
+import LoadingSpinner from './LoadingSpinner';
 import { useTrialStatus } from '../hooks/useTrialStatus';
+
+const DashboardHome = lazy(() => import('./dashboard/DashboardHome'));
+const AIChat = lazy(() => import('./dashboard/AIChat'));
+const Projects = lazy(() => import('./dashboard/Projects'));
+const Analytics = lazy(() => import('./dashboard/Analytics'));
+const Settings = lazy(() => import('./dashboard/Settings'));
 
 type View = 'home' | 'chat' | 'projects' | 'analytics' | 'settings';
 
@@ -38,7 +40,15 @@ export default function Dashboard() {
   return (
     <>
       <DashboardLayout currentView={currentView} onViewChange={handleViewChange}>
-        {renderView()}
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-64">
+              <LoadingSpinner size="lg" text="Loading..." />
+            </div>
+          }
+        >
+          {renderView()}
+        </Suspense>
       </DashboardLayout>
       <TrialExpiredModal isOpen={isExpired} />
     </>
