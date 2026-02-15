@@ -106,8 +106,9 @@ export default function PaymentCheckoutModal({
         default:
           throw new Error('Unsupported payment method');
       }
-    } catch (err: any) {
-      setError(err.message || 'Payment failed. Please try again.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Payment failed. Please try again.';
+      setError(errorMessage);
       setLoading(false);
     }
   };
@@ -128,6 +129,11 @@ export default function PaymentCheckoutModal({
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
+        throw new Error(errorData.error || `HTTP error ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.error) {
@@ -139,7 +145,7 @@ export default function PaymentCheckoutModal({
       } else {
         throw new Error('No checkout URL received');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Stripe payment error:', error);
       throw error;
     }
@@ -161,6 +167,11 @@ export default function PaymentCheckoutModal({
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
+        throw new Error(errorData.error || `HTTP error ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.error) {
@@ -172,7 +183,7 @@ export default function PaymentCheckoutModal({
       } else {
         throw new Error('No PayPal approval URL received');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('PayPal payment error:', error);
       throw error;
     }
@@ -194,6 +205,11 @@ export default function PaymentCheckoutModal({
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
+        throw new Error(errorData.error || `HTTP error ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.error) {
@@ -205,7 +221,7 @@ export default function PaymentCheckoutModal({
       } else {
         throw new Error('No crypto payment URL received');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Crypto payment error:', error);
       throw error;
     }
@@ -227,6 +243,11 @@ export default function PaymentCheckoutModal({
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Payment creation failed' }));
+        throw new Error(errorData.error || `HTTP error ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.error) {
@@ -235,7 +256,7 @@ export default function PaymentCheckoutModal({
 
       alert(`Bank Transfer Instructions:\n\n${data.instructions}\n\nReference: ${data.reference}`);
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Bank transfer error:', error);
       throw error;
     }

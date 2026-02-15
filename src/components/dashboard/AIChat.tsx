@@ -54,49 +54,68 @@ export default function AIChat() {
   const loadConversations = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('conversations')
-      .select('id, title, updated_at')
-      .eq('user_id', user.id)
-      .order('updated_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('conversations')
+        .select('id, title, updated_at')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
 
-    if (data) {
-      setConversations(data);
-      if (data.length > 0 && !currentConversation) {
-        setCurrentConversation(data[0].id);
+      if (error) throw error;
+
+      if (data) {
+        setConversations(data);
+        if (data.length > 0 && !currentConversation) {
+          setCurrentConversation(data[0].id);
+        }
       }
+    } catch (error) {
+      console.error('Error loading conversations:', error);
     }
   };
 
   const loadMessages = async (conversationId: string) => {
-    const { data } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
 
-    if (data) {
-      setMessages(data);
+      if (error) throw error;
+
+      if (data) {
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      setMessages([]);
     }
   };
 
   const createNewConversation = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('conversations')
-      .insert({
-        user_id: user.id,
-        title: 'New Conversation',
-        model: 'gpt-4'
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('conversations')
+        .insert({
+          user_id: user.id,
+          title: 'New Conversation',
+          model: 'gpt-4'
+        })
+        .select()
+        .single();
 
-    if (data) {
-      setConversations([data, ...conversations]);
-      setCurrentConversation(data.id);
-      setMessages([]);
+      if (error) throw error;
+
+      if (data) {
+        setConversations([data, ...conversations]);
+        setCurrentConversation(data.id);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error creating conversation:', error);
     }
   };
 
@@ -107,64 +126,89 @@ export default function AIChat() {
     setInput('');
     setLoading(true);
 
-    const { data: userMsg } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id: currentConversation,
-        role: 'user',
-        content: userMessage,
-        tokens: Math.ceil(userMessage.length / 4)
-      })
-      .select()
-      .single();
-
-    if (userMsg) {
-      setMessages([...messages, userMsg]);
-
-      const aiResponse = `This is a simulated AI response. In production, this would connect to your AI service of choice (OpenAI, Anthropic, etc.). Your message was: "${userMessage}"`;
-
-      const { data: aiMsg } = await supabase
+    try {
+      const { data: userMsg, error: userMsgError } = await supabase
         .from('messages')
         .insert({
           conversation_id: currentConversation,
-          role: 'assistant',
-          content: aiResponse,
-          tokens: Math.ceil(aiResponse.length / 4)
+          role: 'user',
+          content: userMessage,
+          tokens: Math.ceil(userMessage.length / 4)
         })
         .select()
         .single();
 
-      if (aiMsg) {
-        setMessages(prev => [...prev, aiMsg]);
-      }
+      if (userMsgError) throw userMsgError;
 
-      await supabase
-        .from('usage_tracking')
-        .insert({
-          user_id: user.id,
-          action_type: 'chat',
-          tokens_used: Math.ceil((userMessage.length + aiResponse.length) / 4),
-          model: 'gpt-4'
-        });
+      if (userMsg) {
+        setMessages([...messages, userMsg]);
 
-      if (messages.length === 0) {
-        await supabase
-          .from('conversations')
-          .update({ title: userMessage.slice(0, 50) })
-          .eq('id', currentConversation);
-        loadConversations();
+        const aiResponse = `This is a simulated AI response. In production, this would connect to your AI service of choice (OpenAI, Anthropic, etc.).`;
+
+        const { data: aiMsg, error: aiMsgError } = await supabase
+          .from('messages')
+          .insert({
+            conversation_id: currentConversation,
+            role: 'assistant',
+            content: aiResponse,
+            tokens: Math.ceil(aiResponse.length / 4)
+          })
+          .select()
+          .single();
+
+        if (aiMsgError) throw aiMsgError;
+
+        if (aiMsg) {
+          setMessages(prev => [...prev, aiMsg]);
+        }
+
+        const { error: trackingError } = await supabase
+          .from('usage_tracking')
+          .insert({
+            user_id: user.id,
+            action_type: 'chat',
+            tokens_used: Math.ceil((userMessage.length + aiResponse.length) / 4),
+            model: 'gpt-4'
+          });
+
+        if (trackingError) {
+          console.error('Error tracking usage:', trackingError);
+        }
+
+        if (messages.length === 0) {
+          const { error: updateError } = await supabase
+            .from('conversations')
+            .update({ title: userMessage.slice(0, 50) })
+            .eq('id', currentConversation);
+
+          if (updateError) {
+            console.error('Error updating conversation title:', updateError);
+          }
+
+          loadConversations();
+        }
       }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setInput(userMessage);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const deleteConversation = async (id: string) => {
-    await supabase.from('conversations').delete().eq('id', id);
-    setConversations(conversations.filter(c => c.id !== id));
-    if (currentConversation === id) {
-      setCurrentConversation(null);
-      setMessages([]);
+    try {
+      const { error } = await supabase.from('conversations').delete().eq('id', id);
+
+      if (error) throw error;
+
+      setConversations(conversations.filter(c => c.id !== id));
+      if (currentConversation === id) {
+        setCurrentConversation(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
     }
   };
 

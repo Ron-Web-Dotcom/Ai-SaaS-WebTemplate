@@ -38,11 +38,7 @@ function App() {
 
       if (error) throw error;
 
-      if (data?.is_admin && data?.status === 'active') {
-        const urlParams = new URLSearchParams(window.location.search);
-        const isAdminRoute = urlParams.get('admin') === 'true';
-        setIsAdmin(isAdminRoute);
-      }
+      setIsAdmin(data?.is_admin === true && data?.status === 'active');
     } catch (error) {
       console.error('Error checking admin status:', error);
     } finally {

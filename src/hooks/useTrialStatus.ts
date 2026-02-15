@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -19,24 +19,19 @@ export function useTrialStatus(): TrialStatus {
     subscriptionStatus: null,
     isLoading: true,
   });
+  const updateInProgressRef = useRef(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
-    if (!user) {
-      setTrialStatus({
-        isExpired: false,
-        daysRemaining: 14,
-        trialEndDate: null,
-        subscriptionStatus: null,
-        isLoading: false,
-      });
-      return;
-    }
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
-    checkTrialStatus();
-  }, [user]);
+  const checkTrialStatus = useCallback(async () => {
+    if (!user || updateInProgressRef.current) return;
 
-  const checkTrialStatus = async () => {
-    if (!user) return;
+    updateInProgressRef.current = true;
 
     try {
       const { data, error } = await supabase
@@ -46,6 +41,8 @@ export function useTrialStatus(): TrialStatus {
         .maybeSingle();
 
       if (error) throw error;
+
+      if (!mountedRef.current) return;
 
       if (!data) {
         setTrialStatus({
@@ -70,22 +67,44 @@ export function useTrialStatus(): TrialStatus {
         daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
       }
 
-      setTrialStatus({
-        isExpired: isExpired && data.subscription_status !== 'active',
-        daysRemaining,
-        trialEndDate,
-        subscriptionStatus: data.subscription_status,
-        isLoading: false,
-      });
+      if (mountedRef.current) {
+        setTrialStatus({
+          isExpired: isExpired && data.subscription_status !== 'active',
+          daysRemaining,
+          trialEndDate,
+          subscriptionStatus: data.subscription_status,
+          isLoading: false,
+        });
+      }
 
       if (isExpired && data.subscription_status === 'trial') {
-        await supabase
+        const { error: updateError } = await supabase
           .from('profiles')
           .update({ subscription_status: 'expired' })
           .eq('id', user.id);
+
+        if (updateError) {
+          console.error('Error updating trial status:', updateError);
+        }
       }
     } catch (error) {
       console.error('Error checking trial status:', error);
+      if (mountedRef.current) {
+        setTrialStatus({
+          isExpired: false,
+          daysRemaining: 14,
+          trialEndDate: null,
+          subscriptionStatus: null,
+          isLoading: false,
+        });
+      }
+    } finally {
+      updateInProgressRef.current = false;
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
       setTrialStatus({
         isExpired: false,
         daysRemaining: 14,
@@ -93,8 +112,11 @@ export function useTrialStatus(): TrialStatus {
         subscriptionStatus: null,
         isLoading: false,
       });
+      return;
     }
-  };
+
+    checkTrialStatus();
+  }, [user, checkTrialStatus]);
 
   return trialStatus;
 }
