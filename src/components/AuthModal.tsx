@@ -1,6 +1,7 @@
-import { X } from 'lucide-react';
+import { X, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import { validateEmail as validateEmailUtil } from '../utils/emailValidation';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,6 +20,8 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
   const [success, setSuccess] = useState('');
   const [showResetCode, setShowResetCode] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
+  const [emailValidation, setEmailValidation] = useState<{ valid: boolean; message: string } | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,6 +74,8 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
     setError('');
     setSuccess('');
     setShowResetCode(false);
+    setEmailValidation(null);
+    setEmailTouched(false);
     onClose();
   };
 
@@ -82,12 +87,19 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
     setError('');
     setSuccess('');
     setShowResetCode(false);
+    setEmailValidation(null);
+    setEmailTouched(false);
     onSwitchMode();
   };
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (value.length > 0) {
+      const validation = validateEmailUtil(value);
+      setEmailValidation(validation);
+    } else {
+      setEmailValidation(null);
+    }
   };
 
   const validatePassword = (password: string): { valid: boolean; message: string } => {
@@ -115,8 +127,10 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address');
+    const emailValidationResult = validateEmailUtil(email);
+    if (!emailValidationResult.valid) {
+      setError(emailValidationResult.message);
+      setEmailValidation(emailValidationResult);
       return;
     }
 
@@ -311,15 +325,39 @@ export default function AuthModal({ isOpen, onClose, mode, onSwitchMode }: AuthM
             <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
               Email
             </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-xl border border-white/40 bg-white/30 backdrop-blur-xl focus:border-blue-500 focus:bg-white/40 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-gray-900 placeholder-gray-600"
-              placeholder="you@example.com"
-            />
+            <div className="relative">
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                onBlur={() => setEmailTouched(true)}
+                required
+                className={`w-full px-4 py-3 pr-10 rounded-xl border bg-white/30 backdrop-blur-xl focus:bg-white/40 focus:ring-2 outline-none transition-all text-gray-900 placeholder-gray-600 ${
+                  emailTouched && emailValidation
+                    ? emailValidation.valid
+                      ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                      : 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                    : 'border-white/40 focus:border-blue-500 focus:ring-blue-500/20'
+                }`}
+                placeholder="you@example.com"
+              />
+              {emailTouched && emailValidation && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {emailValidation.valid ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                  )}
+                </div>
+              )}
+            </div>
+            {emailTouched && emailValidation && !emailValidation.valid && (
+              <p className="mt-1 text-xs text-red-700 flex items-start gap-1">
+                <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <span>{emailValidation.message}</span>
+              </p>
+            )}
           </div>
 
           {currentMode !== 'forgot-password' && (
